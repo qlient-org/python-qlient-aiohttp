@@ -1,5 +1,5 @@
 import pytest
-from qlient.core import GraphQLResponse
+from qlient.core import GraphQLResponse, GraphQLSubscriptionRequest
 
 from qlient.aiohttp.clients import AIOHTTPClient
 
@@ -29,9 +29,13 @@ async def test_async_client_mutation(qlient_aiohttp_client: AIOHTTPClient):
 @pytest.mark.asyncio
 async def test_async_client_subscription(qlient_aiohttp_client: AIOHTTPClient):
     count = 0
-    result = await qlient_aiohttp_client.subscription.count(target=5)
+    result = await qlient_aiohttp_client.subscription.count(target=3, _subscription_id="123", _options={"foo": "bar"})
     assert isinstance(result, GraphQLResponse)
+    assert isinstance(result.request, GraphQLSubscriptionRequest)
+    assert result.request.subscription_id == "123"
+    assert result.request.options == {"foo": "bar"}
     async for num in result:
-        print(num)
         assert count == num.data["count"]
         count += 1
+
+    assert count == 3

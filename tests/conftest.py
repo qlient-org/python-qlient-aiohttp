@@ -7,8 +7,7 @@ import strawberry
 import strawberry.aiohttp.views
 import strawberry.subscriptions
 
-from qlient.aiohttp.backends import AIOHTTPBackend
-from qlient.aiohttp.clients import AIOHTTPClient
+from qlient.aiohttp import AIOHTTPBackend, AIOHTTPClient
 
 
 @pytest.fixture
@@ -67,11 +66,6 @@ def qlient_aiohttp_app(strawberry_schema) -> aiohttp.web.Application:
     )
 
     return app
-
-
-@pytest.fixture
-async def qlient_aiohttp_test_client(aiohttp_client, qlient_aiohttp_app):
-    return await aiohttp_client(qlient_aiohttp_app)
 
 
 @pytest.fixture
