@@ -163,6 +163,7 @@ class AIOHTTPBackend(AsyncBackend):
                 async for msg in ws:
                     if msg.type == aiohttp.WSMsgType.ERROR:
                         # break the iterator
+                        await ws.close()
                         break
                     if msg.type != aiohttp.WSMsgType.TEXT:
                         raise TypeError(f"Expected {aiohttp.WSMsgType.TEXT}; Got {msg.type}")
@@ -172,6 +173,7 @@ class AIOHTTPBackend(AsyncBackend):
 
                     if data_type in (CONNECTION_TERMINATE, CONNECTION_ERROR, COMPLETE):
                         # break the iterator
+                        await ws.close()
                         break
 
                     if data_type == CONNECTION_KEEP_ALIVE:
