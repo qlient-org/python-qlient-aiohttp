@@ -5,7 +5,12 @@ from typing import Optional, Dict, Any, AsyncGenerator, List
 
 import aiohttp
 import qlient.core.__meta__
-from qlient.core import AsyncBackend, GraphQLRequest, GraphQLResponse, GraphQLSubscriptionRequest
+from qlient.core import (
+    AsyncBackend,
+    GraphQLRequest,
+    GraphQLResponse,
+    GraphQLSubscriptionRequest,
+)
 
 from qlient.aiohttp.exceptions import ConnectionRejected
 
@@ -31,7 +36,6 @@ SUBSCRIPTION_ID_TO_WS = {}
 
 
 class AIOHTTPBackend(AsyncBackend):
-
     @classmethod
     def generate_subscription_id(cls) -> str:
         """Class method to generate unique subscription ids
@@ -75,17 +79,20 @@ class AIOHTTPBackend(AsyncBackend):
         }
 
     def __init__(
-            self,
-            endpoint: str,
-            ws_endpoint: Optional[str] = None,
-            session: Optional[aiohttp.ClientSession] = None,
-            subscription_protocols: Optional[List[str]] = None,
+        self,
+        endpoint: str,
+        ws_endpoint: Optional[str] = None,
+        session: Optional[aiohttp.ClientSession] = None,
+        subscription_protocols: Optional[List[str]] = None,
     ):
         if ws_endpoint is None:
             ws_endpoint = AIOHTTPBackend.adapt_to_websocket_endpoint(endpoint)
 
         if not subscription_protocols:
-            subscription_protocols = [GRAPHQL_WS_PROTOCOL, GRAPHQL_TRANSPORT_WS_PROTOCOL]
+            subscription_protocols = [
+                GRAPHQL_WS_PROTOCOL,
+                GRAPHQL_TRANSPORT_WS_PROTOCOL,
+            ]
 
         self.endpoint: str = endpoint
         self.ws_endpoint: str = ws_endpoint
@@ -128,7 +135,9 @@ class AIOHTTPBackend(AsyncBackend):
         """
         return await self.execute_query(request)
 
-    async def execute_subscription(self, request: GraphQLSubscriptionRequest) -> GraphQLResponse:
+    async def execute_subscription(
+        self, request: GraphQLSubscriptionRequest
+    ) -> GraphQLResponse:
         """
 
         Args:
@@ -139,11 +148,11 @@ class AIOHTTPBackend(AsyncBackend):
         """
         payload = self.make_payload(request)
         async with self.session as session:
-            request.subscription_id = request.subscription_id or self.generate_subscription_id()
+            request.subscription_id = (
+                request.subscription_id or self.generate_subscription_id()
+            )
             ws = await session.ws_connect(
-                self.endpoint,
-                protocols=self.subscription_protocols,
-                autoclose=False
+                self.endpoint, protocols=self.subscription_protocols, autoclose=False
             )
             # initiate connection
             await ws.send_json({"type": CONNECTION_INIT, "payload": request.options})
@@ -151,10 +160,14 @@ class AIOHTTPBackend(AsyncBackend):
             initial_response = await ws.receive_json()
             if initial_response.get("type") != CONNECTION_ACKNOWLEDGED:
                 logger.critical(f"The server did not acknowledged the connection.")
-                raise ConnectionRejected("The server did not acknowledge the connection.")
+                raise ConnectionRejected(
+                    "The server did not acknowledge the connection."
+                )
 
             # connection acknowledged, send request
-            await ws.send_json({"type": START, "id": request.subscription_id, "payload": payload})
+            await ws.send_json(
+                {"type": START, "id": request.subscription_id, "payload": payload}
+            )
 
             SUBSCRIPTION_ID_TO_WS[request.subscription_id] = ws
 
@@ -166,7 +179,9 @@ class AIOHTTPBackend(AsyncBackend):
                         await ws.close()
                         break
                     if msg.type != aiohttp.WSMsgType.TEXT:
-                        raise TypeError(f"Expected {aiohttp.WSMsgType.TEXT}; Got {msg.type}")
+                        raise TypeError(
+                            f"Expected {aiohttp.WSMsgType.TEXT}; Got {msg.type}"
+                        )
 
                     data = msg.json()
                     data_type = data["type"]

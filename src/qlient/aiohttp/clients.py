@@ -21,11 +21,7 @@ class AIOHTTPClient(AsyncClient):
         >>>         result = await client.query.get_books(...)
     """
 
-    def __init__(
-            self,
-            backend: Union[str, Backend],
-            **kwargs
-    ):
+    def __init__(self, backend: Union[str, Backend], **kwargs):
         if isinstance(backend, str):
             backend = AIOHTTPBackend(backend)
 
