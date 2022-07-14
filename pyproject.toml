@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qlient-aiohttp"
-version = "0.1.0-beta.1"
+version = "0.1.0-beta.2"
 description = "A blazingly fast and modern graphql client based on qlient-core and aiohttp"
 authors = ["Daniel Seifert <info@danielseifert.ch>"]
 maintainers = ["Daniel Seifert <info@danielseifert.ch>"]
