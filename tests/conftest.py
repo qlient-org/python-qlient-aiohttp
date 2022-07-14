@@ -61,8 +61,8 @@ def qlient_aiohttp_app(strawberry_schema) -> aiohttp.web.Application:
             subscription_protocols=[
                 strawberry.subscriptions.GRAPHQL_TRANSPORT_WS_PROTOCOL,
                 strawberry.subscriptions.GRAPHQL_WS_PROTOCOL,
-            ]
-        )
+            ],
+        ),
     )
 
     return app
@@ -71,8 +71,7 @@ def qlient_aiohttp_app(strawberry_schema) -> aiohttp.web.Application:
 @pytest.fixture
 async def qlient_aiohttp_client(aiohttp_client, qlient_aiohttp_app) -> AIOHTTPClient:
     backend = AIOHTTPBackend(
-        "/graphql",
-        session=await aiohttp_client(qlient_aiohttp_app)  # noqa
+        "/graphql", session=await aiohttp_client(qlient_aiohttp_app)  # noqa
     )
     async with AIOHTTPClient(backend) as client:
         return client

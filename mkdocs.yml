@@ -1,6 +1,6 @@
 site_name: qlient-aiohttp
 site_url: https://qlient-org.github.io/python-qlient-aiohttp/
-site_description: A fast and modern graphql client library designed with simplicity in mind.
+site_description: A blazingly fast and modern graphql client based on qlient-core and aiohttp
 
 strict: false
 
@@ -35,3 +35,4 @@ markdown_extensions:
 plugins:
   - include-markdown
   - search
+  - mkdocstrings
